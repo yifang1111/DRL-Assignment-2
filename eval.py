@@ -13,12 +13,12 @@ import torch
 import random
 import sys
 import importlib
-import game_env
+import env
 
 
 
 if __name__ == "__main__":
-    game_env.eval_score()  
+    env.eval_score()  
     
 
 
