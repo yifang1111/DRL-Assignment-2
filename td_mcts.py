@@ -11,7 +11,7 @@ from n_tuple_approximator import NTupleApproximator
 
 # Node for TD-MCTS using the TD-trained value approximator
 class TD_MCTS_Node:
-    def __init__(self, state, score, parent=None, action=None):
+    def __init__(self, env, state, score, parent=None, action=None):
         self.state = state
         self.score = score
         self.parent = parent
@@ -97,7 +97,7 @@ class TD_MCTS:
         if not node.fully_expanded():
             action = random.choice(node.untried_actions)
             sim_env.step(action)
-            new_node = TD_MCTS_Node(sim_env.board.copy(), sim_env.score, parent=node, action=action)
+            new_node = TD_MCTS_Node(copy.deepcopy(sim_env), sim_env.board.copy(), sim_env.score, parent=node, action=action)
             node.children[action] = new_node
             node.untried_actions.remove(action)
             node = new_node
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     done = False
     while not done:
         # Create the root node from the current state
-        root = TD_MCTS_Node(state, env.score)
+        root = TD_MCTS_Node(env, state, env.score)
 
         # Run multiple simulations to build the MCTS tree
         for _ in range(td_mcts.iterations):
