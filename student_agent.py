@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import copy
 import random
 import math
+from n_tuple_approximator import NTupleApproximator
+from td_mcts import TD_MCTS, TD_MCTS_Node
 
 
 class Game2048Env(gym.Env):
@@ -132,7 +134,7 @@ class Game2048Env(gym.Env):
 
         return True
 
-    def step(self, action):
+    def step(self, action, spawn=True):
         """Execute one action"""
         assert self.action_space.contains(action), "Invalid action"
 
@@ -149,7 +151,7 @@ class Game2048Env(gym.Env):
 
         self.last_move_valid = moved  # Record if the move was valid
 
-        if moved:
+        if moved and spawn:
             self.add_random_tile()
 
         done = self.is_game_over()
@@ -231,10 +233,46 @@ class Game2048Env(gym.Env):
         # If the simulated board is different from the current board, the move is legal
         return not np.array_equal(self.board, temp_board)
 
+
+env = Game2048Env()
+
+with open("value_approximator_afterstate_weights_14000.pkl", "rb") as f:
+    loaded_weights = pickle.load(f)
+patterns = [
+    [(0,0), (1,0), (2,0), (0,1), (1,1), (2,1)],
+    [(0,1), (1,1), (2,1), (0,2), (1,2), (2,2)],
+    [(0,0), (1,0), (2,0), (3,0), (2,1), (3,1)],
+    [(0,1), (1,1), (2,1), (3,1), (2,2), (3,2)],
+    [(0,0), (1,0), (2,0), (3,0), (1,1), (2,1)],
+    [(0,1), (1,1), (2,1), (3,1), (1,2), (2,2)],
+    [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
+    [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
+]
+approximator = NTupleApproximator(board_size=4, patterns=patterns)
+approximator.weights = loaded_weights
+
+td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=0.99)
+
+
 def get_action(state, score):
-    env = Game2048Env()
-    return random.choice([0, 1, 2, 3]) # Choose a random action
+    # return random.choice([0, 1, 2, 3]) # Choose a random action
     
     # You can submit this random agent to evaluate the performance of a purely random strategy.
+
+    env.board = copy.deepcopy(state)
+    env.score = score
+
+    # Create the root node from the current state
+    root = TD_MCTS_Node(state, env.score)
+
+    # Run multiple simulations to build the MCTS tree
+    for _ in range(td_mcts.iterations):
+        td_mcts.run_simulation(root)
+
+    # Select the best action (based on highest visit count)
+    best_act, _ = td_mcts.best_action_distribution(root)
+    # print("TD-MCTS selected action:", best_act)
+
+    return best_act
 
 
