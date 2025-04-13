@@ -135,7 +135,7 @@ if __name__ == '__main__':
     approximator = NTupleApproximator(board_size=4, patterns=patterns)
     approximator.weights = loaded_weights
 
-    td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=1.0)
+    td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=0, gamma=1.0)
 
     state = env.reset()
     # env.render()
