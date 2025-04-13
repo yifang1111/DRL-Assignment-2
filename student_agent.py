@@ -236,7 +236,7 @@ class Game2048Env(gym.Env):
 
 env = Game2048Env()
 
-with open("value_approximator_afterstate_weights_14000.pkl", "rb") as f:
+with open("value_approximator_afterstate_weights_2_28000.pkl", "rb") as f:
     loaded_weights = pickle.load(f)
 patterns = [
     [(0,0), (1,0), (2,0), (0,1), (1,1), (2,1)],
@@ -245,13 +245,13 @@ patterns = [
     [(0,1), (1,1), (2,1), (3,1), (2,2), (3,2)],
     [(0,0), (1,0), (2,0), (3,0), (1,1), (2,1)],
     [(0,1), (1,1), (2,1), (3,1), (1,2), (2,2)],
-    [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
-    [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
+    # [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
+    # [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
 ]
 approximator = NTupleApproximator(board_size=4, patterns=patterns)
 approximator.weights = loaded_weights
 
-td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=0.99)
+td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=1.0)
 
 
 def get_action(state, score):

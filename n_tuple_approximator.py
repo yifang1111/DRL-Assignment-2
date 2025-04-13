@@ -141,8 +141,8 @@ if __name__ == '__main__':
         [(0,1), (1,1), (2,1), (3,1), (2,2), (3,2)],
         [(0,0), (1,0), (2,0), (3,0), (1,1), (2,1)],
         [(0,1), (1,1), (2,1), (3,1), (1,2), (2,2)],
-        [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
-        [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
+        # [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
+        # [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
     ]   
 
     approximator_afterstate = NTupleApproximator(board_size=4, patterns=patterns)
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     # Run TD-Learning training
     # Note: To achieve significantly better performance, you will likely need to train for over 100,000 episodes.
     # However, to quickly verify that your implementation is working correctly, you can start by running it for 1,000 episodes before scaling up.
-    final_scores = td_learning_afterstate(env, approximator_afterstate, num_episodes=50000, alpha=0.1, gamma=0.99, epsilon=0.1)
+    final_scores = td_learning_afterstate(env, approximator_afterstate, num_episodes=50000, alpha=0.1, gamma=1.0, epsilon=0.1)
 
     with open("value_approximator_afterstate_weights.pkl", "wb") as f:
         pickle.dump(approximator_afterstate.weights, f)

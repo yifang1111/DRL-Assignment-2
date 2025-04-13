@@ -74,7 +74,7 @@ class TD_MCTS:
             values = []
             for a in legal_moves:
                 sim_copy = copy.deepcopy(sim_env)
-                afterstate, score_after, _, _ = sim_copy.step(a, spawn=False)
+                afterstate, afterscore, _, _ = sim_copy.step(a, spawn=False)
                 v = self.approximator.value(afterstate)
                 values.append(v)
             total_reward += discount * max(values)
@@ -120,7 +120,7 @@ class TD_MCTS:
 if __name__ == '__main__':
     env = Game2048Env()
 
-    with open("value_approximator_afterstate_weights_14000.pkl", "rb") as f:
+    with open("value_approximator_afterstate_weights_2_28000.pkl", "rb") as f:
         loaded_weights = pickle.load(f)
     patterns = [
         [(0,0), (1,0), (2,0), (0,1), (1,1), (2,1)],
@@ -129,13 +129,13 @@ if __name__ == '__main__':
         [(0,1), (1,1), (2,1), (3,1), (2,2), (3,2)],
         [(0,0), (1,0), (2,0), (3,0), (1,1), (2,1)],
         [(0,1), (1,1), (2,1), (3,1), (1,2), (2,2)],
-        [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
-        [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
+        # [(0,0), (1,0), (2,0), (3,0), (3,1), (3,2)],
+        # [(0,0), (1,0), (2,0), (3,0), (2,1), (2,2)],
     ]
     approximator = NTupleApproximator(board_size=4, patterns=patterns)
     approximator.weights = loaded_weights
 
-    td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=0.99)
+    td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=1.0)
 
     state = env.reset()
     # env.render()

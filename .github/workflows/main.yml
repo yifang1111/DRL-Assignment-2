@@ -34,7 +34,7 @@ jobs:
     - name: 3.5 Download model weights
       run: |
         pip install gdown
-        gdown https://drive.google.com/uc?id=1bKbZjWm5m7YAwljOjje4jbSa1-Wtd2gJ -O value_approximator_afterstate_weights_14000.pkl
+        gdown https://drive.google.com/uc?id=1bDZc4ZLqZaISOn_1GU-dGoVeoV81uHfo -O value_approximator_afterstate_weights_2_28000.pkl
 
     - name: 4. Run Evaluation
       run: python eval.py --token a91aae52cff9ef65932db06b150ffd47
