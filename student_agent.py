@@ -10,6 +10,7 @@ import random
 import math
 from n_tuple_approximator import NTupleApproximator
 from td_mcts import TD_MCTS, TD_MCTS_Node
+from td_mcts_dcn import DecisionNode, TD_MCTS_DCN
 
 
 class Game2048Env(gym.Env):
@@ -251,7 +252,8 @@ patterns = [
 approximator = NTupleApproximator(board_size=4, patterns=patterns)
 approximator.weights = loaded_weights
 
-td_mcts = TD_MCTS(env, approximator, iterations=100, exploration_constant=1.41, rollout_depth=0, gamma=1.0)
+# td_mcts = TD_MCTS(env, approximator, iterations=100, exploration_constant=1.41, rollout_depth=0, gamma=1.0)
+td_mcts = TD_MCTS_DCN(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=0, gamma=0.99)
 
 
 def get_action(state, score):
@@ -263,7 +265,9 @@ def get_action(state, score):
     env.score = score
 
     # Create the root node from the current state
-    root = TD_MCTS_Node(env, state, env.score)
+    # root = TD_MCTS_Node(env, state, env.score)
+    root = DecisionNode(env, env.board, env.score)
+
 
     # Run multiple simulations to build the MCTS tree
     for _ in range(td_mcts.iterations):
